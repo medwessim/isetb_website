@@ -16,7 +16,9 @@ const moments: Moment[] = [
   { id: 4, title: "CODE IT UP 5.0", imageUrl: "../../images/1.jpg" },
   { id: 7, title: "TSYP 12", imageUrl: "../../images/10.jpg" },
   { id: 8, title: "Bizerte TCODI", imageUrl: "../../images/11.png" },
-  { id: 9, title: "Panel ", imageUrl: "../../images/5.jpg" },
+  { id: 9, title: "CSTAM 2.0 ", imageUrl: "../../images/14.jpg" },
+  { id: 10, title: "Panel ", imageUrl: "../../images/5.jpg" },
+
 ];
 
 // Desktop stacked cards logic

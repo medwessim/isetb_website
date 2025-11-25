@@ -3,27 +3,64 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-
-
 const IEEEContactPage = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         message: ''
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
+        // Reset status when user starts typing again
+        if (submitStatus !== 'idle') {
+            setSubmitStatus('idle');
+        }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission here
-        console.log('Form submitted:', formData);
-        alert('Thank you for your message! We will get back to you soon.');
+        setIsSubmitting(true);
+        setSubmitStatus('idle');
+
+        try {
+            // Simulate API call - replace with your actual form submission
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Handle form submission here
+            console.log('Form submitted:', formData);
+            
+            // Show success state
+            setSubmitStatus('success');
+            
+            // Reset form
+            setFormData({
+                name: '',
+                email: '',
+                message: ''
+            });
+
+            // Auto-hide success message after 5 seconds
+            setTimeout(() => {
+                setSubmitStatus('idle');
+            }, 5000);
+
+        } catch (error) {
+            console.error('Form submission error:', error);
+            setSubmitStatus('error');
+            
+            // Auto-hide error message after 5 seconds
+            setTimeout(() => {
+                setSubmitStatus('idle');
+            }, 5000);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const socialLinks = [
@@ -100,7 +137,6 @@ const IEEEContactPage = () => {
             title: 'Email',
             description: 'isetb@ieee.tn'
         },
-
     ];
 
     const containerVariants = {
@@ -127,19 +163,14 @@ const IEEEContactPage = () => {
 
     return (
         <div className="min-h-screen relative">
-            {/* Votre GradientBackground sera ici */}
-
-          
             <div className="relative z-10">
                <div className="container px-6 py-12 mx-auto md:px-8 lg:px-12 xl:px-24 lg:py-16">
-
                     <motion.div
                         className="text-center mb-16"
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-
                     </motion.div>
 
                     <motion.div
@@ -158,16 +189,15 @@ const IEEEContactPage = () => {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.8, delay: 0.2 }}
                             >
-                                <h1 className="text-4xl lg:text-5xl  leading-tight">
+                                <h1 className="text-4xl lg:text-5xl leading-tight">
                                     Join The
-                                    <span className="block font-semibold ">
+                                    <span className="block font-semibold">
                                         Innovation Revolution
                                     </span>
                                 </h1>
 
                                 <p className="mt-6 text-lg text-gray-300 leading-relaxed">
                                     Welcome to IEEE ISET Bizerte Student Branch - where technology meets innovation.
-
                                 </p>
                             </motion.div>
 
@@ -222,7 +252,6 @@ const IEEEContactPage = () => {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-medium text-white truncate">{social.name}</p>
-
                                             </div>
                                         </motion.a>
                                     ))}
@@ -262,6 +291,43 @@ const IEEEContactPage = () => {
                                         Interested in joining IEEE or collaborating on projects? We'd love to hear from you!
                                     </motion.p>
 
+                                    {/* Status Messages */}
+                                    {submitStatus === 'success' && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-xl text-green-200"
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                <span className="font-medium">Thank you for your message!</span>
+                                            </div>
+                                            <p className="text-sm mt-1 text-green-100">
+                                                We've received your message and will get back to you soon.
+                                            </p>
+                                        </motion.div>
+                                    )}
+
+                                    {submitStatus === 'error' && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200"
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span className="font-medium">Something went wrong!</span>
+                                            </div>
+                                            <p className="text-sm mt-1 text-red-100">
+                                                Please try again later or contact us directly via email.
+                                            </p>
+                                        </motion.div>
+                                    )}
+
                                     <form onSubmit={handleSubmit} className="space-y-6">
                                         <motion.div
                                             initial={{ opacity: 0, x: 20 }}
@@ -279,6 +345,7 @@ const IEEEContactPage = () => {
                                                 placeholder="Your full name"
                                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                                                 required
+                                                disabled={isSubmitting}
                                             />
                                         </motion.div>
 
@@ -298,6 +365,7 @@ const IEEEContactPage = () => {
                                                 placeholder="your.email@gmail.com"
                                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                                                 required
+                                                disabled={isSubmitting}
                                             />
                                         </motion.div>
 
@@ -317,22 +385,35 @@ const IEEEContactPage = () => {
                                                 placeholder="Tell us about your interest in IEEE or your project idea..."
                                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
                                                 required
+                                                disabled={isSubmitting}
                                             />
                                         </motion.div>
 
                                         <motion.button
                                             type="submit"
-                                            whileHover={{
+                                            disabled={isSubmitting}
+                                            whileHover={!isSubmitting ? {
                                                 scale: 1.02,
                                                 boxShadow: "0 10px 30px -10px rgba(59, 130, 246, 0.5)"
-                                            }}
-                                            whileTap={{ scale: 0.98 }}
-                                            className="w-full py-4 px-6 bg-gradient-to-r from-red-500 to-blue-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-blue-700 transition-all duration-300 shadow-lg"
+                                            } : {}}
+                                            whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                                            className={`w-full py-4 px-6 text-white font-medium rounded-xl transition-all duration-300 shadow-lg ${
+                                                isSubmitting 
+                                                    ? 'bg-gray-600 cursor-not-allowed' 
+                                                    : 'bg-gradient-to-r from-red-500 to-blue-600 hover:from-red-600 hover:to-blue-700'
+                                            }`}
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 1.1 }}
                                         >
-                                            Send Message
+                                            {isSubmitting ? (
+                                                <div className="flex items-center justify-center space-x-2">
+                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                    <span>Sending...</span>
+                                                </div>
+                                            ) : (
+                                                'Send Message'
+                                            )}
                                         </motion.button>
                                     </form>
                                 </div>
@@ -401,7 +482,6 @@ const IEEEContactPage = () => {
                     </motion.div>
                 </div>
             </div>
-       
         </div>
     );
 };
