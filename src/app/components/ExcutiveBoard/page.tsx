@@ -1,69 +1,12 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-
-interface ExecutiveMember {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-  facebook: string;
-  linkedin: string;
-  email: string;
-}
+import { EXECUTIVE_MEMBERS, SUPERVISOR, type ExecutiveMember, type Supervisor } from '../../data/team';
 
 interface ExecutiveCardProps {
   member: ExecutiveMember;
   index: number;
 }
-
-const EXECUTIVE_MEMBERS: ExecutiveMember[] = [
-  {
-    id: 1,
-    name: 'Tesnim Solly',
-    role: 'Chair',
-    image: '/images/tesnim.png',
-    facebook: 'https://www.facebook.com/tesnim.solli',
-    linkedin: 'https://www.linkedin.com/in/tesnim-solly-745805262/',
-    email: 'mailto:sollytesnim@ieee.org'
-  },
-  {
-    id: 2,
-    name: 'Mohamed Chibane',
-    role: 'Vice Chair',
-    image: '/images/chibane.png',
-    facebook: 'https://www.facebook.com/mohamed.chibane.7921',
-    linkedin: 'https://www.linkedin.com/in/mohamed-chibane-456bb0336/',
-    email: 'mailto:Mohamedchibane@ieee.org'
-  },
-  {
-    id: 3,
-    name: 'Amal Ben Jamaa',
-    role: 'Treasurer',
-    image: '/images/amal.png',
-    facebook: 'https://www.facebook.com/amalbenjamaa',
-    linkedin: 'https://www.linkedin.com/in/amal-ben-jamaa-3222b3330/',
-    email: 'mailto:amalbenjamaa@ieee.org'
-  },
-  {
-    id: 4,
-    name: 'Med Wessim Saidani',
-    role: 'Webmaster',
-    image: '/images/wessim.png',
-    facebook: 'https://www.facebook.com/mohamed.saidani.948011',
-    linkedin: 'https://www.linkedin.com/in/mohamedwessim/',
-    email: 'mailto:Wessimsaidani@ieee.org'
-  },
-  {
-    id: 5,
-    name: 'Tesnim Hajaji',
-    role: 'Secretary',
-    image: '/images/tesnim2.png',
-    facebook: 'https://www.facebook.com/tasnim.hajjeji',
-    linkedin: '#',
-    email: 'mailto:tasnimhajjeji@ieee.org'
-  },
-];
 
 const FacebookIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1.1em" viewBox="0 0 512 512" className={className}>
@@ -190,6 +133,96 @@ const ExecutiveCard: React.FC<ExecutiveCardProps> = ({ member, index }) => {
   );
 };
 
+// ─── Supervisor Card ──────────────────────────────────────────────────────────
+const SupervisorCard: React.FC<{ supervisor: Supervisor }> = ({ supervisor }) => {
+  const [imgStatus, setImgStatus] = useState<'loading' | 'loaded' | 'error'>(
+    supervisor.image ? 'loading' : 'error'
+  );
+
+  useEffect(() => {
+    if (!supervisor.image) return;
+    const img = new Image();
+    img.src = supervisor.image;
+    img.onload = () => setImgStatus('loaded');
+    img.onerror = () => setImgStatus('error');
+  }, [supervisor.image]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+      className="flex justify-center mb-10 sm:mb-14"
+    >
+      <div className="group relative flex flex-col sm:flex-row items-center gap-5 sm:gap-7
+                      bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl
+                      px-6 py-6 sm:px-10 sm:py-7 shadow-2xl w-full max-w-lg
+                      hover:bg-white/15 transition-all duration-500">
+
+        {/* Gold accent top border */}
+        <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+
+        {/* Avatar */}
+        <div className="relative flex-shrink-0">
+          <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-amber-400/30 to-yellow-300/10 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-amber-400/50 shadow-lg bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center">
+            {imgStatus === 'loading' && (
+              <div className="absolute inset-0 animate-pulse bg-white/10 flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+            {imgStatus === 'loaded' && (
+              <img src={supervisor.image} alt={supervisor.name} className="w-full h-full object-cover" />
+            )}
+            {imgStatus === 'error' && (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-white/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            )}
+          </div>
+          {/* Star badge */}
+          <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-amber-400 border-2 border-white/20 flex items-center justify-center shadow-md">
+            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="text-center sm:text-left">
+          <p className="text-xs font-semibold tracking-widest text-amber-400/80 uppercase mb-1">
+            Branch Supervisor
+          </p>
+          <h3 className="text-lg sm:text-xl font-bold text-white mb-1">{supervisor.name}</h3>
+          <p className="text-sm text-white/60">{supervisor.title} · {supervisor.institution}</p>
+
+          <div className="flex items-center justify-center sm:justify-start gap-3 mt-3">
+            {supervisor.email && supervisor.email !== 'mailto:' && (
+              <a href={supervisor.email} aria-label="Email"
+                 className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-all duration-200">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                </svg>
+              </a>
+            )}
+            {supervisor.linkedin && supervisor.linkedin !== '#' && (
+              <a href={supervisor.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                 className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-all duration-200">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 512 512">
+                  <path d="M444.17 32H70.28C49.85 32 32 46.7 32 66.89v374.72C32 461.91 49.85 480 70.28 480h373.78c20.54 0 35.94-18.21 35.94-38.39V66.89C480.12 46.7 464.6 32 444.17 32zm-273.3 373.43h-64.18V205.88h64.18zM141 175.54h-.46c-20.54 0-33.84-15.29-33.84-34.43 0-19.49 13.65-34.42 34.65-34.42s33.85 14.82 34.31 34.42c-.01 19.14-13.31 34.43-34.66 34.43zm264.43 229.89h-64.18V296.32c0-26.14-9.34-44-32.56-44-17.74 0-28.24 12-32.91 23.69-1.75 4.2-2.22 9.92-2.22 15.76v113.66h-64.18V205.88h64.18v27.77c9.34-13.3 23.93-32.44 57.88-32.44 42.13 0 74 27.77 74 87.64z" />
+                </svg>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// ─── Main Section ─────────────────────────────────────────────────────────────
 const ExecutiveCommittee: React.FC = () => {
   return (
     <section className="min-h-screen py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
@@ -219,7 +252,10 @@ const ExecutiveCommittee: React.FC = () => {
           </p>
         </motion.header>
 
-        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
+        {/* Supervisor */}
+        <SupervisorCard supervisor={SUPERVISOR} />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
           {EXECUTIVE_MEMBERS.map((member, index) => (
             <ExecutiveCard key={member.id} member={member} index={index} />
           ))}
