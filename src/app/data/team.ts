@@ -25,7 +25,7 @@ export interface Supervisor {
 
 // ── Update supervisor info here ───────────────────────────────────────────────
 export const SUPERVISOR: Supervisor = {
-  name: 'Dr. Imen Jammali',
+  name: 'Mrs. Imene Jemmali',
   title: 'Branch Counselor',
   institution: 'ISET Bizerte',
   image: '',           
