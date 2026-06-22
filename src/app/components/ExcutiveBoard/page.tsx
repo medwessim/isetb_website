@@ -214,7 +214,7 @@ const ExecutiveCard: React.FC<ExecutiveCardProps> = ({ member, index }) => {
           </div>
           
           {/* Role indicator */}
-          <div className="absolute -bottom-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 border-3 border-white shadow-lg transform group-hover:scale-110 transition-transform duration-300"></div>
+          <div className="absolute -bottom-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 border-2 border-white shadow-lg transform group-hover:scale-110 transition-transform duration-300"></div>
         </div>
 
         {/* Member info */}

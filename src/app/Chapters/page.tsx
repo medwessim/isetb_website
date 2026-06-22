@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 
 import Cs from "../assets/cs.png";
 import Cis from "../assets/cis.png";
@@ -100,7 +99,14 @@ const chapters = [
 ];
 
 // Social Media Button Component
-function SocialButtons({ socials }: { socials: any }) {
+interface Socials {
+    website: string;
+    facebook: string;
+    instagram: string;
+    linkedin: string;
+}
+
+function SocialButtons({ socials }: { socials: Socials }) {
     return (
         <div className="flex flex-wrap gap-2 sm:gap-3 mt-4 sm:mt-6 justify-center md:justify-start">
     <motion.a
@@ -173,7 +179,7 @@ function AlternatingSection({
     text: React.ReactNode;
     image?: string;
     invert: boolean;
-    socials: any;
+    socials: Socials;
 }) {
     return (
         <section
@@ -266,7 +272,7 @@ export default function ChaptersPage() {
 
             {/* Chapters Sections */}
             <div className="space-y-8 sm:space-y-6 lg:space-y-8 py-8 sm:py-6 lg:py-8">
-                {chapters.map((chapter, idx) => (
+                {chapters.map((chapter) => (
                     <AlternatingSection key={chapter.id} {...chapter} />
                 ))}
             </div>

@@ -1,33 +1,35 @@
 "use client";
 import React, { useEffect, useRef, useCallback } from 'react';
 
-/**
- * Enhanced React component with optimized particle network effects
- * Improved density, performance, and interactivity
- */
-export const GradientBackground = () => {
-  const canvasRef = useRef(null);
-  const mouseRef = useRef({
-    x: undefined,
-    y: undefined,
-    radius: 180 // Increased interaction radius for better hover area
-  });
-  const animationFrameId = useRef(null);
-  const particlesRef = useRef([]);
-  const timeRef = useRef(0);
-  const isMobileRef = useRef(false);
+const PARTICLE_COLOR = 'rgba(255, 255, 255, 0.8)';
+const LINE_COLOR = 'rgba(255, 255, 255, 0.15)';
+const CONNECTION_DISTANCE = 150;
 
-  // --- Enhanced Configuration ---
-  const particleColor = 'rgba(255, 255, 255, 0.8)';
-  const lineColor = 'rgba(255, 255, 255, 0.15)';
-  const connectionDistance = 150; // Increased for denser network
+let globalTime = 0;
 
-  /**
-   * Optimized Particle class with enhanced physics
-   */
-  class Particle {
-    constructor(x, y, canvas) {
-      this.canvas = canvas;
+class Particle {
+  canvas: HTMLCanvasElement;
+  x: number;
+  y: number;
+  baseX: number;
+  baseY: number;
+  size: number;
+  currentSize: number;
+  pulseOffset: number;
+  density: number;
+  velocityX: number;
+  velocityY: number;
+  friction: number;
+  spring: number;
+  hoverScale: number;
+  autoSpeedX: number;
+  autoSpeedY: number;
+  autoAmplitude: number;
+  autoFrequency: number;
+  autoPhase: number;
+
+  constructor(x: number, y: number, canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
       this.x = x;
       this.y = y;
       this.baseX = x;
@@ -53,39 +55,32 @@ export const GradientBackground = () => {
     /**
      * Enhanced drawing with better performance
      */
-    draw(ctx) {
+    draw(ctx: CanvasRenderingContext2D) {
       const hoverMultiplier = 1 + (this.hoverScale * 0.5);
       const displaySize = this.currentSize * hoverMultiplier;
 
-      // Enhanced glow effect
       const gradient = ctx.createRadialGradient(
         this.x, this.y, 0,
         this.x, this.y, displaySize * 3
       );
       gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
       gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      
+
       ctx.beginPath();
       ctx.fillStyle = gradient;
       ctx.arc(this.x, this.y, displaySize * 3, 0, Math.PI * 2);
       ctx.fill();
 
-      // Core particle
       ctx.beginPath();
-      ctx.fillStyle = particleColor;
+      ctx.fillStyle = PARTICLE_COLOR;
       ctx.arc(this.x, this.y, displaySize, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    /**
-     * Mobile auto-animation - smooth floating movement (slower and smoother)
-     */
-    updateMobile(ctx, deltaTime) {
-      // Enhanced pulsing animation (slower)
-      this.currentSize = this.size + Math.sin(timeRef.current * 0.002 + this.pulseOffset) * 0.3;
+    updateMobile(ctx: CanvasRenderingContext2D, deltaTime: number) {
+      this.currentSize = this.size + Math.sin(globalTime * 0.002 + this.pulseOffset) * 0.3;
 
-      // Smooth floating animation (slower and more gentle)
-      const time = timeRef.current;
+      const time = globalTime;
       const driftX = Math.sin(time * this.autoFrequency + this.autoPhase) * this.autoAmplitude;
       const driftY = Math.cos(time * this.autoFrequency * 0.7 + this.autoPhase) * this.autoAmplitude;
       
@@ -106,9 +101,8 @@ export const GradientBackground = () => {
     /**
      * Optimized physics update with hover effects (desktop)
      */
-    update(ctx, mouse, deltaTime) {
-      // Enhanced pulsing animation
-      this.currentSize = this.size + Math.sin(timeRef.current * 0.003 + this.pulseOffset) * 0.3;
+    update(ctx: CanvasRenderingContext2D, mouse: { x: number | undefined; y: number | undefined; radius: number }, deltaTime: number) {
+      this.currentSize = this.size + Math.sin(globalTime * 0.003 + this.pulseOffset) * 0.3;
 
       let forceX = 0;
       let forceY = 0;
@@ -177,22 +171,31 @@ export const GradientBackground = () => {
     }
   }
 
+export const GradientBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef<{ x: number | undefined; y: number | undefined; radius: number }>({
+    x: undefined,
+    y: undefined,
+    radius: 180,
+  });
+  const animationFrameId = useRef<number | null>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const isMobileRef = useRef(false);
+
   // Optimized connection drawing using spatial partitioning
-  const drawConnections = useCallback((ctx, particles) => {
-    ctx.strokeStyle = lineColor;
+  const drawConnections = useCallback((ctx: CanvasRenderingContext2D, particles: Particle[]) => {
+    ctx.strokeStyle = LINE_COLOR;
     ctx.lineWidth = 1.2;
-    
-    // Simple optimization: only check nearby particles
+
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const dx = particles[i].x - particles[j].x;
         const dy = particles[i].y - particles[j].y;
         const distanceSq = dx * dx + dy * dy;
 
-        // Skip distance calculation if obviously too far
-        if (distanceSq < connectionDistance * connectionDistance) {
+        if (distanceSq < CONNECTION_DISTANCE * CONNECTION_DISTANCE) {
           const distance = Math.sqrt(distanceSq);
-          const opacity = 1 - Math.pow(distance / connectionDistance, 2);
+          const opacity = 1 - Math.pow(distance / CONNECTION_DISTANCE, 2);
           ctx.globalAlpha = opacity * 0.8;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
@@ -202,7 +205,7 @@ export const GradientBackground = () => {
       }
     }
     ctx.globalAlpha = 1.0;
-  }, [connectionDistance, lineColor]);
+  }, []);
 
   // Check if mobile
   const checkMobile = useCallback(() => {
@@ -222,7 +225,7 @@ export const GradientBackground = () => {
     ctx.imageSmoothingQuality = 'high';
 
     let lastTime = 0;
-    let resizeTimeout;
+    let resizeTimeout: ReturnType<typeof setTimeout>;
 
     /**
      * Enhanced initialization with 50% more particles
@@ -248,10 +251,10 @@ export const GradientBackground = () => {
     /**
      * Optimized animation loop
      */
-    const animate = (currentTime) => {
+    const animate = (currentTime: number) => {
       const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1);
       lastTime = currentTime;
-      timeRef.current = currentTime;
+      globalTime = currentTime;
 
       // Efficient canvas clearing
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -275,7 +278,7 @@ export const GradientBackground = () => {
     };
 
     // --- Enhanced Event Handlers ---
-    const handleMouseMove = (event) => {
+    const handleMouseMove = (event: MouseEvent) => {
       if (!mouseRef.current || isMobileRef.current) return;
       mouseRef.current.x = event.clientX;
       mouseRef.current.y = event.clientY;
@@ -287,10 +290,8 @@ export const GradientBackground = () => {
       mouseRef.current.y = undefined;
     };
 
-    const handleTouchMove = (event) => {
-      // Disable touch interaction on mobile - let scrolling work normally
+    const handleTouchMove = (event: TouchEvent) => {
       if (isMobileRef.current) return;
-      
       if (!mouseRef.current || !event.touches[0]) return;
       event.preventDefault();
       mouseRef.current.x = event.touches[0].clientX;
@@ -401,10 +402,4 @@ export const GradientBackground = () => {
   );
 };
 
-export default function Home() {
-  return (
-    <div>
-      <GradientBackground />
-    </div>
-  );
-}
+export default GradientBackground;
