@@ -199,44 +199,6 @@ export const GradientBackground = () => {
     ctx.globalAlpha = 1;
   }, []);
 
-  // ── Cursor glow: pulsing ring + radial halo + tiny dot ────────────────────
-  const drawCursorGlow = useCallback((ctx: CanvasRenderingContext2D) => {
-    const m = mouseRef.current;
-    if (m.x === undefined || m.y === undefined) return;
-
-    const pulse = 0.5 + 0.5 * Math.sin(globalTime * 0.0045);
-
-    // Soft radial halo
-    const halo = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, 58);
-    halo.addColorStop(0, `rgba(0, 200, 255, ${(0.10 + pulse * 0.08).toFixed(3)})`);
-    halo.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.beginPath();
-    ctx.fillStyle = halo;
-    ctx.arc(m.x, m.y, 58, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Outer pulsing ring
-    const outerR = 18 + pulse * 6;
-    ctx.beginPath();
-    ctx.arc(m.x, m.y, outerR, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(0, 200, 255, ${(0.18 + pulse * 0.14).toFixed(3)})`;
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
-
-    // Inner crisp ring
-    ctx.beginPath();
-    ctx.arc(m.x, m.y, 7 + pulse * 2, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(0, 220, 255, ${(0.50 + pulse * 0.30).toFixed(3)})`;
-    ctx.lineWidth = 1.2;
-    ctx.stroke();
-
-    // Tiny bright centre dot
-    ctx.beginPath();
-    ctx.arc(m.x, m.y, 2.2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(120, 230, 255, ${(0.80 + pulse * 0.20).toFixed(3)})`;
-    ctx.fill();
-  }, []);
-
   const checkMobile = useCallback(() => window.innerWidth < 768, []);
 
   useEffect(() => {
@@ -282,8 +244,6 @@ export const GradientBackground = () => {
       }
 
       drawConnections(ctx, particles);
-
-      if (!isMobile) drawCursorGlow(ctx);
 
       animFrameId.current = requestAnimationFrame(animate);
     };
@@ -335,7 +295,7 @@ export const GradientBackground = () => {
       clearTimeout(resizeTimeout);
       if (animFrameId.current) cancelAnimationFrame(animFrameId.current);
     };
-  }, [drawConnections, drawCursorGlow, checkMobile]);
+  }, [drawConnections, checkMobile]);
 
   return (
     <div
