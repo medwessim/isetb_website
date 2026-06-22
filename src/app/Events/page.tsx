@@ -9,7 +9,7 @@ const eventsData = {
       id: 1,
       name: "CODE IT UP 6.0",
       description: "A hands-on coding event to challenge your skills, build projects, and compete with peers.",
-      image: "../../images/12.jpg",
+      image: "/images/12.jpg",
       category: "technical",
       date: "", //date: "2024-02-18",
       time: "", //time: "2:00 PM - 5:00 PM",
@@ -20,7 +20,7 @@ const eventsData = {
       id: 2,
       name: "Bizerte TCODI 3.0",
       description: "A tech and coding competition in Bizerte where students solve real-world problems, showcase innovation, and collaborate on cutting-edge projects.",
-      image: "../../images/7.png",
+      image: "/images/7.png",
       category: "technical",
       date: "", //date: "2024-02-18",
       time: "", //time: "2:00 PM - 5:00 PM",
@@ -34,7 +34,7 @@ const eventsData = {
       id: 5,
       name: "General Assembly",
       description: "The official gathering of our IEEE ISET Bizerte members to discuss achievements, plan future activities, and make key decisions for the branch’s growth and community impact.",
-      image: "../../images/13.jpg",
+      image: "/images/13.jpg",
       category: "non-technical",
       date: "", //date: "2024-02-18",
       time: "", //time: "2:00 PM - 5:00 PM",
@@ -46,7 +46,7 @@ const eventsData = {
 };
 
 // Helper function to format date
-const formatDate = (dateString) => {
+const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
     month: 'short',
@@ -55,7 +55,19 @@ const formatDate = (dateString) => {
   });
 };
 
-const EventCard = ({ event }) => {
+interface EventItem {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  category: string;
+  date: string;
+  time: string;
+  location: string;
+  venue: string;
+}
+
+const EventCard = ({ event }: { event: EventItem }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -279,7 +291,7 @@ const EventsPage = () => {
         {/* Footer Note */}
         <div className="text-center mt-12 sm:mt-16 lg:mt-20 px-4">
           <p className="text-gray-300 text-sm sm:text-base">
-            Can't find what you're looking for?{' '}
+            Can&apos;t find what you&apos;re looking for?{' '}
             <button className="text-blue-400 hover:text-blue-300 font-semibold transition-colors duration-300">
               Contact our events team
             </button>

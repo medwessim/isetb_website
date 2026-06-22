@@ -7,25 +7,32 @@ interface Moment {
   imageUrl: string;
 }
 
+interface CardStyle {
+  translateX: string;
+  scale: string;
+  opacity: string;
+  zIndex: number;
+}
+
 const moments: Moment[] = [
-  { id: 1, title: "WIE ACT 4.0", imageUrl: "../../images/9.jpg" },
-  { id: 2, title: "IEEE DAY 2025", imageUrl: "../../images/8.jpg" },
-  { id: 3, title: "CODE IT UP 5.0", imageUrl: "../../images/3.png" },
-  { id: 11, title: "CSTAM 2.0 ", imageUrl: "../../images/15.jpg" },
-  { id: 5, title: "IEEE TEJMAANA 2.0", imageUrl: "../../images/6.png" },
-  { id: 6, title: "IEEE DAY 2024", imageUrl: "../../images/2.jpg" },
-  { id: 4, title: "CODE IT UP 5.0", imageUrl: "../../images/1.jpg" },
-  { id: 7, title: "TSYP 12", imageUrl: "../../images/10.jpg" },
-  { id: 8, title: "Bizerte TCODI", imageUrl: "../../images/11.png" },
-  { id: 9, title: "CSTAM 2.0 ", imageUrl: "../../images/14.jpg" },
-  { id: 10, title: "Panel ", imageUrl: "../../images/5.jpg" },
+  { id: 1, title: "WIE ACT 4.0", imageUrl: "/images/9.jpg" },
+  { id: 2, title: "IEEE DAY 2025", imageUrl: "/images/8.jpg" },
+  { id: 3, title: "CODE IT UP 5.0", imageUrl: "/images/3.png" },
+  { id: 11, title: "CSTAM 2.0 ", imageUrl: "/images/15.jpg" },
+  { id: 5, title: "IEEE TEJMAANA 2.0", imageUrl: "/images/6.png" },
+  { id: 6, title: "IEEE DAY 2024", imageUrl: "/images/2.jpg" },
+  { id: 4, title: "CODE IT UP 5.0", imageUrl: "/images/1.jpg" },
+  { id: 7, title: "TSYP 12", imageUrl: "/images/10.jpg" },
+  { id: 8, title: "Bizerte TCODI", imageUrl: "/images/11.png" },
+  { id: 9, title: "CSTAM 2.0 ", imageUrl: "/images/14.jpg" },
+  { id: 10, title: "Panel ", imageUrl: "/images/5.jpg" },
   
 
 ];
 
 // Desktop stacked cards logic
-const getCardStyles = (position: number, totalLength: number) => {
-  const styles = {
+const getCardStyles = (position: number, totalLength: number): CardStyle => {
+  const styles: CardStyle = {
     translateX: "0px",
     scale: "0",
     opacity: "0",
@@ -71,7 +78,8 @@ const getCardStyles = (position: number, totalLength: number) => {
   return styles;
 };
 
-const MomentCardMobile = memo(({ moment }: { moment: Moment }) => (
+const MomentCardMobile = memo(function MomentCardMobile({ moment }: { moment: Moment }) {
+  return (
   <div className="w-full flex flex-col items-center">
     <div className="w-[88vw] max-w-xs h-[220px] rounded-2xl shadow-md bg-gradient-to-br from-cyan-400 to-emerald-400 relative overflow-hidden">
       <img
@@ -90,11 +98,11 @@ const MomentCardMobile = memo(({ moment }: { moment: Moment }) => (
       </div>
     </div>
   </div>
-));
+  );
+});
 
-// Memoize the MomentCard to prevent unnecessary re-renders (desktop)
-const MomentCard = memo(
-  ({ moment, style }: { moment: Moment; style: any }) => (
+const MomentCard = memo(function MomentCard({ moment, style }: { moment: Moment; style: CardStyle }) {
+  return (
     <div
       className="absolute transition-all duration-500 ease-in-out"
       style={{
@@ -140,8 +148,8 @@ const MomentCard = memo(
         </div>
       </div>
     </div>
-  )
-);
+  );
+});
 
 const MomentsCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
