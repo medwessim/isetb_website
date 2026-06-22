@@ -27,7 +27,7 @@ function useCount(target: number, enabled: boolean, duration = 1800) {
 
 // ─── Data ──────────────────────────────────────────────────────────────────
 const STATS = [
-  { icon: Users, value: 180, suffix: '+', label: 'Active Members', gradient: 'from-sky-400 to-blue-500', glow: 'rgba(56,189,248,0.18)' },
+  { icon: Users, value: 140, suffix: '+', label: 'Active Members', gradient: 'from-sky-400 to-blue-500', glow: 'rgba(56,189,248,0.18)' },
   { icon: CalendarDays, value: 45, suffix: '+', label: 'Events Organized', gradient: 'from-cyan-400 to-teal-500', glow: 'rgba(34,211,238,0.18)' },
   { icon: Cpu, value: 5, suffix: '', label: 'Technical Chapters', gradient: 'from-violet-400 to-indigo-500', glow: 'rgba(167,139,250,0.18)' },
   { icon: Trophy, value: 6, suffix: '', label: 'Years of Impact', gradient: 'from-emerald-400 to-green-500', glow: 'rgba(52,211,153,0.18)' },
@@ -169,62 +169,55 @@ const HeroSection = () => {
           {/* ── Info bar ───────────────────────────────────────────────── */}
           <motion.div
             {...fadeUp(1.6)}
-            className="w-full bg-white/8 backdrop-blur-2xl rounded-2xl
-                       border border-white/12 shadow-xl px-5 py-4 mb-6"
+            className="w-full backdrop-blur-2xl rounded-2xl border border-white/12 shadow-xl px-4 py-4 mb-6"
             style={{ background: 'rgba(255,255,255,0.07)' }}
           >
-            <div className="flex flex-col sm:flex-row items-center justify-around gap-4 sm:gap-2">
+            <div className="grid grid-cols-2 sm:flex sm:flex-row sm:items-center sm:justify-around gap-3 sm:gap-2">
 
               {/* Location */}
-              <div className="flex items-center gap-2.5 group cursor-default">
+              <div className="flex items-center gap-2.5 group cursor-default min-w-0">
                 <div className="flex-shrink-0 p-2 rounded-xl bg-sky-500/15 group-hover:bg-sky-500/25 transition-colors duration-300">
-                  <MapPin size={15} className="text-sky-400" />
+                  <MapPin size={14} className="text-sky-400" />
                 </div>
-                <div className="text-left">
-                  <p className="text-[10px] font-bold tracking-widest text-white/40 uppercase">Location</p>
-                  <p className="text-sm font-semibold text-white/85">ISET Bizerte, Tunisia</p>
+                <div className="text-left min-w-0">
+                  <p className="text-[9px] font-bold tracking-widest text-white/40 uppercase">Location</p>
+                  <p className="text-xs sm:text-sm font-semibold text-white/85 truncate">ISET Bizerte, Tunisia</p>
                 </div>
               </div>
-
-              <div className="hidden sm:block w-px h-8 bg-white/15" />
 
               {/* IEEE affiliation */}
-              <div className="flex items-center gap-2.5 group cursor-default">
+              <div className="flex items-center gap-2.5 group cursor-default min-w-0">
                 <div className="flex-shrink-0 p-2 rounded-xl bg-cyan-500/15 group-hover:bg-cyan-500/25 transition-colors duration-300">
-                  <Globe size={15} className="text-cyan-400" />
+                  <Globe size={14} className="text-cyan-400" />
                 </div>
-                <div className="text-left">
-                  <p className="text-[10px] font-bold tracking-widest text-white/40 uppercase">Affiliation</p>
-                  <p className="text-sm font-semibold text-white/85">IEEE Region 8 · Tunisia Section</p>
+                <div className="text-left min-w-0">
+                  <p className="text-[9px] font-bold tracking-widest text-white/40 uppercase">Affiliation</p>
+                  <p className="text-xs sm:text-sm font-semibold text-white/85 truncate">IEEE R8 · Tunisia</p>
                 </div>
               </div>
 
-              <div className="hidden sm:block w-px h-8 bg-white/15" />
-
               {/* Active members badge */}
-              <div className="flex items-center gap-2.5 group cursor-default">
+              <div className="flex items-center gap-2.5 group cursor-default min-w-0">
                 <div className="flex-shrink-0 p-2 rounded-xl bg-emerald-500/15 group-hover:bg-emerald-500/25 transition-colors duration-300">
-                  <Users size={15} className="text-emerald-400" />
+                  <Users size={14} className="text-emerald-400" />
                 </div>
-                <div className="text-left">
-                  <p className="text-[10px] font-bold tracking-widest text-white/40 uppercase">Members</p>
+                <div className="text-left min-w-0">
+                  <p className="text-[9px] font-bold tracking-widest text-white/40 uppercase">Members</p>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <p className="text-sm font-semibold text-white/85">180+ Active</p>
+                    <span className="w-1.5 h-1.5 flex-shrink-0 rounded-full bg-emerald-400 animate-pulse" />
+                    <p className="text-xs sm:text-sm font-semibold text-white/85">140+ Active</p>
                   </div>
                 </div>
               </div>
 
-              <div className="hidden sm:block w-px h-8 bg-white/15" />
-
               {/* Live clock */}
-              <div className="flex items-center gap-2.5 group cursor-default">
+              <div className="flex items-center gap-2.5 group cursor-default min-w-0">
                 <div className="flex-shrink-0 p-2 rounded-xl bg-violet-500/15 group-hover:bg-violet-500/25 transition-colors duration-300">
-                  <Clock size={15} className="text-violet-400" />
+                  <Clock size={14} className="text-violet-400" />
                 </div>
-                <div className="text-left">
-                  <p className="text-[10px] font-bold tracking-widest text-white/40 uppercase">Local Time</p>
-                  <p className="font-mono text-sm font-semibold text-white/85 tabular-nums">
+                <div className="text-left min-w-0">
+                  <p className="text-[9px] font-bold tracking-widest text-white/40 uppercase">Local Time</p>
+                  <p className="font-mono text-xs sm:text-sm font-semibold text-white/85 tabular-nums">
                     {t.h}:{t.m}:{t.s} <span className="text-white/55">{t.ampm}</span>
                   </p>
                 </div>
@@ -239,7 +232,7 @@ const HeroSection = () => {
           <motion.div
             ref={statsRef}
             {...fadeUp(1.45)}
-            className="w-full grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+            className="w-full grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6"
           >
             {STATS.map((stat, i) => {
               const Icon = stat.icon;
@@ -249,7 +242,7 @@ const HeroSection = () => {
                   whileHover={{ y: -5, scale: 1.03 }}
                   transition={{ type: 'spring', stiffness: 380, damping: 22 }}
                   className="relative group bg-white/10 backdrop-blur-xl border border-white/15
-                             rounded-2xl p-5 overflow-hidden cursor-default text-left"
+                             rounded-2xl p-3.5 sm:p-5 overflow-hidden cursor-default text-left"
                 >
                   {/* Corner glow blob */}
                   <div
@@ -261,19 +254,19 @@ const HeroSection = () => {
 
                   {/* Icon */}
                   <div
-                    className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${stat.gradient} bg-opacity-20 mb-3 shadow-inner`}
+                    className={`inline-flex p-2 sm:p-2.5 rounded-xl mb-2 sm:mb-3 shadow-inner`}
                     style={{ background: `linear-gradient(135deg, ${stat.glow}, rgba(255,255,255,0.06))` }}
                   >
-                    <Icon size={18} className="text-white" />
+                    <Icon size={16} className="text-white" />
                   </div>
 
                   {/* Value */}
-                  <div className={`text-3xl lg:text-4xl font-black bg-gradient-to-br ${stat.gradient} bg-clip-text text-transparent tabular-nums`}>
+                  <div className={`text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-br ${stat.gradient} bg-clip-text text-transparent tabular-nums`}>
                     {counts[i]}{stat.suffix}
                   </div>
 
                   {/* Label */}
-                  <div className="text-[11px] font-medium text-white/45 mt-1 leading-snug">
+                  <div className="text-[10px] sm:text-[11px] font-medium text-white/45 mt-1 leading-snug">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -283,13 +276,13 @@ const HeroSection = () => {
           {/* ── CTA buttons ────────────────────────────────────────────── */}
           <motion.div
             {...fadeUp(1.3)}
-            className="flex flex-col sm:flex-row items-center gap-3 mb-16"
+            className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mb-16"
           >
-            <Link href="/Events">
+            <Link href="/Events" className="w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.05, boxShadow: '0 0 36px rgba(0,198,255,0.40)' }}
                 whileTap={{ scale: 0.97 }}
-                className="px-8 py-3.5 rounded-2xl text-sm font-semibold tracking-wide
+                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-semibold tracking-wide
                            bg-gradient-to-r from-cyan-500 to-blue-600 text-white
                            shadow-lg shadow-cyan-500/25 transition-shadow duration-200"
               >
@@ -297,11 +290,11 @@ const HeroSection = () => {
               </motion.button>
             </Link>
 
-            <Link href="/AboutUs">
+            <Link href="/AboutUs" className="w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.04, backgroundColor: 'rgba(255,255,255,0.16)' }}
                 whileTap={{ scale: 0.97 }}
-                className="px-8 py-3.5 rounded-2xl text-sm font-semibold tracking-wide
+                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-semibold tracking-wide
                            bg-white/10 text-white border border-white/25
                            backdrop-blur-md transition-colors duration-200"
               >
@@ -309,11 +302,11 @@ const HeroSection = () => {
               </motion.button>
             </Link>
 
-            <Link href="/Contact">
+            <Link href="/Contact" className="w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.04, backgroundColor: 'rgba(255,255,255,0.16)' }}
                 whileTap={{ scale: 0.97 }}
-                className="px-8 py-3.5 rounded-2xl text-sm font-semibold tracking-wide
+                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-semibold tracking-wide
                            bg-white/10 text-white border border-white/25
                            backdrop-blur-md transition-colors duration-200"
               >
