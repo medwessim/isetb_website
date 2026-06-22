@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -51,12 +51,12 @@ const PremiumFooter = () => {
     { name: 'LinkedIn', href: 'https://www.linkedin.com/company/ieee-iset-bizerte-student-branch', icon: LinkedInIcon, color: 'hover:text-blue-300' }
   ];
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.1 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const, staggerChildren: 0.1 } }
   };
 
-  const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
+  const itemVariants: Variants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } } };
 
   return (
     <motion.footer initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={containerVariants} className="relative mt-20">
@@ -70,7 +70,7 @@ const PremiumFooter = () => {
             <motion.div variants={itemVariants} className="space-y-3 md:space-y-4">
               <h3 className="text-base md:text-lg font-semibold text-white tracking-wide">IEEE ISET Bizerte Chapters and AG</h3>
               <ul className="space-y-2">
-                {ieeeChapters.map((chapter, index) => (
+                {ieeeChapters.map((chapter) => (
                   <motion.li key={chapter.name} variants={itemVariants} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
                     <a href={chapter.href} target="_blank" className="text-white/80 hover:text-white transition flex items-center">
                       <span className="w-2 h-2 bg-blue-400 rounded-full mr-2 opacity-0 group-hover:opacity-100 transition-all duration-300"></span>
@@ -85,7 +85,7 @@ const PremiumFooter = () => {
             <motion.div variants={itemVariants} className="space-y-3 md:space-y-4">
               <h3 className="text-base md:text-lg font-semibold text-white tracking-wide">Quick Links</h3>
               <ul className="space-y-2">
-                {quickLinks.map((link, index) => (
+                {quickLinks.map((link) => (
                   <motion.li key={link.name} variants={itemVariants} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
                     <a href={link.href} className="text-white/80 hover:text-white transition flex items-center">
                       <span className="w-2 h-2 bg-green-400 rounded-full mr-2 opacity-0 group-hover:opacity-100 transition-all duration-300"></span>

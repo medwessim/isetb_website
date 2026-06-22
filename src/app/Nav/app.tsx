@@ -1,20 +1,16 @@
 // app/components/Navbar.tsx
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Menu, 
-  X, 
-  Home, 
-  Users, 
-  MapPin, 
-  Calendar, 
+import {
+  Menu,
+  X,
+  Home,
+  Calendar,
   Mail,
   Building,
   Users2,
-  Globe,
-  Phone
 } from 'lucide-react';
 import Image from 'next/image';
 import logo from "../assets/logo.png";
