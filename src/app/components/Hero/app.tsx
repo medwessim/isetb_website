@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 
 const HeroSection = () => {
@@ -80,13 +81,23 @@ const HeroSection = () => {
             <div className="loader"></div>
           </div>
 
-          <div className="relative mb-8 sm:mb-10">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.9, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+            className="relative mb-8 sm:mb-10"
+          >
             <p className="text-base mt-4 text-lg text-gray-200 md:text-xl tracking-wide font-light" style={{ textShadow: '0 1px 5px rgba(0,0,0,0.2)' }}>
               &ldquo;FORGED BY SEA&rdquo;
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-4 sm:p-6 md:p-8 border border-white/20 transition-all duration-500 hover:shadow-2xl hover:bg-white/15 font-[Poppins] shadow-xl overflow-x-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.9, delay: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+            className="bg-white/10 backdrop-blur-2xl rounded-3xl p-4 sm:p-6 md:p-8 border border-white/20 transition-all duration-500 hover:shadow-2xl hover:bg-white/15 font-[Poppins] shadow-xl overflow-x-auto"
+          >
   <div className="min-w-[700px] grid grid-cols-3 gap-6 sm:gap-8 lg:gap-10 items-center">
     
     {/* Current Location */}
@@ -195,8 +206,7 @@ const HeroSection = () => {
     </div>
 
   </div>
-</div>
-
+          </motion.div>
         </div>
       </div>
 

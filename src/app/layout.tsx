@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import GradientBackground from './components/Background/app';
 import { Navbar } from './Nav/app';
 import Footer from './Footer/page';
-import Loader from './Loader/page'; // or use LogoLoader
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import Loader from './Loader/page';
 
 export const metadata: Metadata = {
   title: "IEEE ISET Bizerte Student Branch",
@@ -36,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
         {/* Loader - shows only on first visit, above everything */}
         <Loader />

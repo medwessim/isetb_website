@@ -1,11 +1,9 @@
 "use client";
 import { motion, type Variants } from "framer-motion";
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../assets/IEEE x ISETB_white.png";
 
-// Social icons
 const FacebookIcon = ({ className = "w-5 h-5" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" className={className}>
     <path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"/>
@@ -24,43 +22,52 @@ const LinkedInIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
+const ieeeChapters = [
+  { name: 'WIE (Women in Engineering)', href: '#' },
+  { name: 'IAS & IES Joint Chapter', href: '#' },
+  { name: 'CS (Computer Society)', href: 'https://cs-isetbizerte.ieee.tn/' },
+  { name: 'RAS (Robotics and Automation Society)', href: '#' },
+  { name: 'CIS (Computational Intelligence Society)', href: 'https://cis-isetbizerte.ieee.tn/' }
+];
+
+const quickLinks = [
+  { name: 'Home', href: '/' },
+  { name: 'About us', href: '/AboutUs' },
+  { name: 'Chapter & AG', href: '/Chapters' },
+  { name: 'Events', href: '/Events' },
+  { name: 'Contact', href: '/Contact' }
+];
+
+const socialLinks = [
+  { name: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61550723499159', icon: FacebookIcon, color: 'hover:text-blue-400' },
+  { name: 'Instagram', href: 'https://www.instagram.com/ieee_iset_bizerte_sb/', icon: InstagramIcon, color: 'hover:text-pink-500' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/company/ieee-iset-bizerte-student-branch', icon: LinkedInIcon, color: 'hover:text-blue-300' }
+];
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: "easeOut" as const, staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } }
+};
+
 const PremiumFooter = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => setIsVisible(true), []);
-
-  const ieeeChapters = [
-    { name: 'WIE (Women in Engineering)', href: '#' },
-    { name: 'IAS & IES Joint Chapter ', href: '#' },
-    { name: 'CS (Computer Society)', href: 'https://cs-isetbizerte.ieee.tn/' },
-    { name: 'RAS (Robotics and Automation Society)', href: '#' },
-    { name: 'CIS (Computational Intelligence Society)', href: 'https://cis-isetbizerte.ieee.tn/' }
-  ];
-
-  const quickLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'About us', href: '/AboutUs' },
-    { name: 'Chapter & AG', href: '/Chapters' },
-    { name: 'Events', href: '/Events' },
-    { name: 'Contact', href: '/Contact' }
-  ];
-
-  const socialLinks = [
-    { name: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61550723499159', icon: FacebookIcon, color: 'hover:text-blue-400' },
-    { name: 'Instagram', href: 'https://www.instagram.com/ieee_iset_bizerte_sb/', icon: InstagramIcon, color: 'hover:text-pink-500' },
-    { name: 'LinkedIn', href: 'https://www.linkedin.com/company/ieee-iset-bizerte-student-branch', icon: LinkedInIcon, color: 'hover:text-blue-300' }
-  ];
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const, staggerChildren: 0.1 } }
-  };
-
-  const itemVariants: Variants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } } };
-
   return (
-    <motion.footer initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={containerVariants} className="relative mt-20">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-3xl opacity-30"></div>
+    <motion.footer
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      variants={containerVariants}
+      className="relative mt-20"
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-3xl opacity-30" />
 
       <div className="relative max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <motion.div variants={containerVariants} className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 md:p-8 border border-white/20 shadow-2xl">
@@ -72,8 +79,8 @@ const PremiumFooter = () => {
               <ul className="space-y-2">
                 {ieeeChapters.map((chapter) => (
                   <motion.li key={chapter.name} variants={itemVariants} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
-                    <a href={chapter.href} target="_blank" className="text-white/80 hover:text-white transition flex items-center">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full mr-2 opacity-0 group-hover:opacity-100 transition-all duration-300"></span>
+                    <a href={chapter.href} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition flex items-center">
+                      <span className="w-2 h-2 bg-blue-400 rounded-full mr-2 flex-shrink-0" />
                       {chapter.name}
                     </a>
                   </motion.li>
@@ -88,7 +95,7 @@ const PremiumFooter = () => {
                 {quickLinks.map((link) => (
                   <motion.li key={link.name} variants={itemVariants} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
                     <a href={link.href} className="text-white/80 hover:text-white transition flex items-center">
-                      <span className="w-2 h-2 bg-green-400 rounded-full mr-2 opacity-0 group-hover:opacity-100 transition-all duration-300"></span>
+                      <span className="w-2 h-2 bg-green-400 rounded-full mr-2 flex-shrink-0" />
                       {link.name}
                     </a>
                   </motion.li>
@@ -105,9 +112,17 @@ const PremiumFooter = () => {
 
               <div className="flex space-x-3 md:space-x-4 flex-wrap">
                 {socialLinks.map((social) => (
-                  <motion.a key={social.name} href={social.href} target="_blank" variants={itemVariants} whileHover={{ scale: 1.15, y: -2 }} whileTap={{ scale: 0.95 }}
-                    className={`w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 flex items-center justify-center text-white/80 ${social.color} hover:bg-white/20 transition shadow-lg hover:shadow-xl`}>
-                    <social.icon className="w-4 h-4 md:w-5 md:h-5 transition-colors duration-300"/>
+                  <motion.a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.15, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 flex items-center justify-center text-white/80 ${social.color} hover:bg-white/20 transition shadow-lg hover:shadow-xl`}
+                  >
+                    <social.icon className="w-4 h-4 md:w-5 md:h-5 transition-colors duration-300" />
                   </motion.a>
                 ))}
               </div>
@@ -119,17 +134,23 @@ const PremiumFooter = () => {
             </motion.div>
           </div>
 
-          <motion.div variants={itemVariants} className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent my-4 md:my-6"/>
+          <motion.div variants={itemVariants} className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent my-4 md:my-6" />
 
           <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
-            <div className="text-white/60 text-sm text-center md:text-left">© {new Date().getFullYear()} IEEE ISET Bizerte. </div>
-
-            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} className="flex items-center justify-center md:justify-end w-full md:w-auto">
+            <div className="text-white/60 text-sm text-center md:text-left">
+              © {new Date().getFullYear()} IEEE ISET Bizerte.
+            </div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              className="flex items-center justify-center md:justify-end w-full md:w-auto"
+            >
               <Link href="/" className="relative w-36 h-10 md:w-40 md:h-12 block">
-                <Image src={logo} alt="Logo" fill className="object-contain object-left hover:scale-105 transition-transform duration-300"/>
+                <Image src={logo} alt="Logo" fill className="object-contain object-left hover:scale-105 transition-transform duration-300" />
               </Link>
             </motion.div>
           </motion.div>
+
         </motion.div>
       </div>
     </motion.footer>
