@@ -8,13 +8,13 @@ interface ThemeContextValue {
   toggle: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({ theme: 'light', toggle: () => {} });
+const ThemeContext = createContext<ThemeContextValue>({ theme: 'dark', toggle: () => {} });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
-    const saved = (localStorage.getItem('ieee-theme') as Theme) ?? 'light';
+    const saved = (localStorage.getItem('ieee-theme') as Theme) ?? 'dark';
     setTheme(saved);
     document.documentElement.classList.toggle('dark', saved === 'dark');
   }, []);
