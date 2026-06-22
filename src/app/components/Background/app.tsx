@@ -1,402 +1,400 @@
 "use client";
 import React, { useEffect, useRef, useCallback } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
-const PARTICLE_COLOR = 'rgba(255, 255, 255, 0.8)';
-const LINE_COLOR = 'rgba(255, 255, 255, 0.15)';
-const CONNECTION_DISTANCE = 150;
+// ─── Constants ───────────────────────────────────────────────────────────────
+const CONNECTION_DISTANCE = 165;
+const MOUSE_RADIUS = 210;
+
+// ─── Particle colour palette (IEEE blue → cyan, mostly white) ────────────────
+interface PColor { solid: string; glow: string; }
+const PALETTE: PColor[] = [
+  { solid: 'rgba(255, 255, 255, 0.92)', glow: 'rgba(210, 235, 255, 0.13)' }, // white
+  { solid: 'rgba(255, 255, 255, 0.88)', glow: 'rgba(200, 230, 255, 0.12)' }, // white soft
+  { solid: 'rgba(195, 240, 255, 0.82)', glow: 'rgba(100, 205, 255, 0.16)' }, // ice blue
+  { solid: 'rgba(0, 198, 255, 0.80)',   glow: 'rgba(0, 198, 255, 0.22)'   }, // bright cyan
+  { solid: 'rgba(0, 165, 230, 0.72)',   glow: 'rgba(0, 165, 230, 0.18)'   }, // ocean blue
+];
+// Cumulative weights: 30% white, 25% soft-white, 25% ice, 12% cyan, 8% ocean
+const PALETTE_CDF = [0.30, 0.55, 0.80, 0.92, 1.00];
+
+function pickColor(): PColor {
+  const r = Math.random();
+  for (let i = 0; i < PALETTE_CDF.length; i++) {
+    if (r < PALETTE_CDF[i]) return PALETTE[i];
+  }
+  return PALETTE[0];
+}
 
 let globalTime = 0;
 
+// ─── Particle ────────────────────────────────────────────────────────────────
 class Particle {
   canvas: HTMLCanvasElement;
-  x: number;
-  y: number;
-  baseX: number;
-  baseY: number;
-  size: number;
-  currentSize: number;
-  pulseOffset: number;
-  density: number;
-  velocityX: number;
-  velocityY: number;
-  friction: number;
-  spring: number;
-  hoverScale: number;
-  autoSpeedX: number;
-  autoSpeedY: number;
-  autoAmplitude: number;
-  autoFrequency: number;
-  autoPhase: number;
+  x: number; y: number; baseX: number; baseY: number;
+  size: number; currentSize: number; pulseOffset: number;
+  density: number; velocityX: number; velocityY: number;
+  friction: number; spring: number; hoverScale: number;
+  autoSpeedX: number; autoSpeedY: number;
+  autoAmplitude: number; autoFrequency: number; autoPhase: number;
+  solidColor: string; glowColor: string;
+  mouseProximity: number; // 0–1, cached each frame
 
   constructor(x: number, y: number, canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-      this.x = x;
-      this.y = y;
-      this.baseX = x;
-      this.baseY = y;
-      this.size = Math.random() * 1.5 + 1;
-      this.currentSize = this.size;
-      this.pulseOffset = Math.random() * Math.PI * 2;
-      this.density = (Math.random() * 8) + 2;
-      this.velocityX = 0;
-      this.velocityY = 0;
-      this.friction = 0.88;
-      this.spring = 0.08;
-      this.hoverScale = 1; // For hover effects
-      
-      // Mobile auto-animation properties - smoother and slower
-      this.autoSpeedX = (Math.random() - 0.5) * 0.3;  // Reduced from 0.8 to 0.3
-      this.autoSpeedY = (Math.random() - 0.5) * 0.3;  // Reduced from 0.8 to 0.3
-      this.autoAmplitude = Math.random() * 15 + 8;     // Reduced from 20+10 to 15+8
-      this.autoFrequency = Math.random() * 0.001 + 0.0005; // Reduced from 0.002+0.001 to 0.001+0.0005
-      this.autoPhase = Math.random() * Math.PI * 2;
-    }
+    this.x = x; this.y = y; this.baseX = x; this.baseY = y;
+    this.size = Math.random() * 1.4 + 0.65;
+    this.currentSize = this.size;
+    this.pulseOffset = Math.random() * Math.PI * 2;
+    this.density = Math.random() * 7 + 2;
+    this.velocityX = 0; this.velocityY = 0;
+    this.friction = 0.86;
+    this.spring = 0.11;
+    this.hoverScale = 0;
+    this.mouseProximity = 0;
 
-    /**
-     * Enhanced drawing with better performance
-     */
-    draw(ctx: CanvasRenderingContext2D) {
-      const hoverMultiplier = 1 + (this.hoverScale * 0.5);
-      const displaySize = this.currentSize * hoverMultiplier;
+    const c = pickColor();
+    this.solidColor = c.solid;
+    this.glowColor = c.glow;
 
-      const gradient = ctx.createRadialGradient(
-        this.x, this.y, 0,
-        this.x, this.y, displaySize * 3
-      );
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-      ctx.beginPath();
-      ctx.fillStyle = gradient;
-      ctx.arc(this.x, this.y, displaySize * 3, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.fillStyle = PARTICLE_COLOR;
-      ctx.arc(this.x, this.y, displaySize, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    updateMobile(ctx: CanvasRenderingContext2D, deltaTime: number) {
-      this.currentSize = this.size + Math.sin(globalTime * 0.002 + this.pulseOffset) * 0.3;
-
-      const time = globalTime;
-      const driftX = Math.sin(time * this.autoFrequency + this.autoPhase) * this.autoAmplitude;
-      const driftY = Math.cos(time * this.autoFrequency * 0.7 + this.autoPhase) * this.autoAmplitude;
-      
-      // Apply auto movement (slower)
-      this.x = this.baseX + driftX;
-      this.y = this.baseY + driftY;
-
-      // Gentle continuous movement (much slower)
-      this.baseX += this.autoSpeedX * deltaTime * 15;  // Reduced from 30 to 15
-      this.baseY += this.autoSpeedY * deltaTime * 15;  // Reduced from 30 to 15
-
-      // Edge handling
-      this.handleEdges();
-
-      this.draw(ctx);
-    }
-
-    /**
-     * Optimized physics update with hover effects (desktop)
-     */
-    update(ctx: CanvasRenderingContext2D, mouse: { x: number | undefined; y: number | undefined; radius: number }, deltaTime: number) {
-      this.currentSize = this.size + Math.sin(globalTime * 0.003 + this.pulseOffset) * 0.3;
-
-      let forceX = 0;
-      let forceY = 0;
-      let isHovered = false;
-
-      // Enhanced mouse interaction
-      if (mouse.x !== undefined && mouse.y !== undefined) {
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < mouse.radius) {
-          isHovered = distance < mouse.radius * 0.5;
-          const force = Math.pow((mouse.radius - distance) / mouse.radius, 1.5);
-          const directionX = dx / distance;
-          const directionY = dy / distance;
-          
-          forceX = directionX * force * this.density * 6;
-          forceY = directionY * force * this.density * 6;
-        }
-      }
-
-      // Smooth hover scale animation
-      this.hoverScale += (isHovered ? 0.1 : 0 - this.hoverScale) * 0.1;
-
-      // Spring force
-      const springForceX = (this.baseX - this.x) * this.spring;
-      const springForceY = (this.baseY - this.y) * this.spring;
-
-      // Apply forces
-      this.velocityX += (forceX + springForceX) * deltaTime;
-      this.velocityY += (forceY + springForceY) * deltaTime;
-
-      // Apply friction
-      this.velocityX *= this.friction;
-      this.velocityY *= this.friction;
-
-      // Update position
-      this.x += this.velocityX * deltaTime * 60;
-      this.y += this.velocityY * deltaTime * 60;
-
-      // Edge handling
-      this.handleEdges();
-
-      this.draw(ctx);
-    }
-
-    handleEdges() {
-      const margin = this.currentSize;
-      
-      if (this.x > this.canvas.width + margin) {
-        this.x = -margin;
-        this.baseX = this.x;
-      } else if (this.x < -margin) {
-        this.x = this.canvas.width + margin;
-        this.baseX = this.x;
-      }
-      
-      if (this.y > this.canvas.height + margin) {
-        this.y = -margin;
-        this.baseY = this.y;
-      } else if (this.y < -margin) {
-        this.y = this.canvas.height + margin;
-        this.baseY = this.y;
-      }
-    }
+    this.autoSpeedX = (Math.random() - 0.5) * 0.27;
+    this.autoSpeedY = (Math.random() - 0.5) * 0.27;
+    this.autoAmplitude = Math.random() * 16 + 7;
+    this.autoFrequency = Math.random() * 0.0009 + 0.0004;
+    this.autoPhase = Math.random() * Math.PI * 2;
   }
 
-export const GradientBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef<{ x: number | undefined; y: number | undefined; radius: number }>({
-    x: undefined,
-    y: undefined,
-    radius: 180,
-  });
-  const animationFrameId = useRef<number | null>(null);
-  const particlesRef = useRef<Particle[]>([]);
-  const isMobileRef = useRef(false);
+  draw(ctx: CanvasRenderingContext2D) {
+    const hm = 1 + this.hoverScale * 1.0;
+    const sz = this.currentSize * hm;
 
-  // Optimized connection drawing using spatial partitioning
-  const drawConnections = useCallback((ctx: CanvasRenderingContext2D, particles: Particle[]) => {
-    ctx.strokeStyle = LINE_COLOR;
-    ctx.lineWidth = 1.2;
+    // Outer soft halo (colour-tinted per palette)
+    const outerGrad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, sz * 5);
+    outerGrad.addColorStop(0, this.glowColor);
+    outerGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.fillStyle = outerGrad;
+    ctx.arc(this.x, this.y, sz * 5, 0, Math.PI * 2);
+    ctx.fill();
 
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const distanceSq = dx * dx + dy * dy;
+    // Core dot
+    ctx.beginPath();
+    ctx.fillStyle = this.solidColor;
+    ctx.arc(this.x, this.y, sz, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
-        if (distanceSq < CONNECTION_DISTANCE * CONNECTION_DISTANCE) {
-          const distance = Math.sqrt(distanceSq);
-          const opacity = 1 - Math.pow(distance / CONNECTION_DISTANCE, 2);
-          ctx.globalAlpha = opacity * 0.8;
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.stroke();
-        }
+  updateMobile(ctx: CanvasRenderingContext2D, deltaTime: number) {
+    this.currentSize = this.size + Math.sin(globalTime * 0.002 + this.pulseOffset) * 0.32;
+    const driftX = Math.sin(globalTime * this.autoFrequency + this.autoPhase) * this.autoAmplitude;
+    const driftY = Math.cos(globalTime * this.autoFrequency * 0.7 + this.autoPhase) * this.autoAmplitude;
+    this.x = this.baseX + driftX;
+    this.y = this.baseY + driftY;
+    this.baseX += this.autoSpeedX * deltaTime * 12;
+    this.baseY += this.autoSpeedY * deltaTime * 12;
+    this.handleEdges();
+    this.draw(ctx);
+  }
+
+  update(ctx: CanvasRenderingContext2D, mouse: { x: number | undefined; y: number | undefined; radius: number }, deltaTime: number) {
+    this.currentSize = this.size + Math.sin(globalTime * 0.003 + this.pulseOffset) * 0.32;
+    this.mouseProximity = 0;
+
+    let forceX = 0, forceY = 0;
+    let isHovered = false;
+
+    if (mouse.x !== undefined && mouse.y !== undefined) {
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < mouse.radius) {
+        this.mouseProximity = 1 - dist / mouse.radius;
+        isHovered = dist < mouse.radius * 0.42;
+        const force = Math.pow((mouse.radius - dist) / mouse.radius, 1.5);
+        forceX = (dx / dist) * force * this.density * 7;
+        forceY = (dy / dist) * force * this.density * 7;
       }
     }
-    ctx.globalAlpha = 1.0;
+
+    this.hoverScale += ((isHovered ? 0.18 : 0) - this.hoverScale) * 0.1;
+
+    const springFX = (this.baseX - this.x) * this.spring;
+    const springFY = (this.baseY - this.y) * this.spring;
+    this.velocityX += (forceX + springFX) * deltaTime;
+    this.velocityY += (forceY + springFY) * deltaTime;
+    this.velocityX *= this.friction;
+    this.velocityY *= this.friction;
+    this.x += this.velocityX * deltaTime * 60;
+    this.y += this.velocityY * deltaTime * 60;
+    this.handleEdges();
+    this.draw(ctx);
+  }
+
+  handleEdges() {
+    const m = this.currentSize;
+    if (this.x > this.canvas.width + m) { this.x = -m; this.baseX = this.x; }
+    else if (this.x < -m) { this.x = this.canvas.width + m; this.baseX = this.x; }
+    if (this.y > this.canvas.height + m) { this.y = -m; this.baseY = this.y; }
+    else if (this.y < -m) { this.y = this.canvas.height + m; this.baseY = this.y; }
+  }
+}
+
+// ─── React Component ─────────────────────────────────────────────────────────
+export const GradientBackground = () => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const canvasRef   = useRef<HTMLCanvasElement>(null);
+  const mouseRef    = useRef<{ x: number | undefined; y: number | undefined; radius: number }>({
+    x: undefined, y: undefined, radius: MOUSE_RADIUS,
+  });
+  const animFrameId  = useRef<number | null>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const isMobileRef  = useRef(false);
+
+  // ── Connection lines: two passes for performance ───────────────────────────
+  // Pass 1 = normal (white-blue, dim), Pass 2 = near-cursor (cyan, bright)
+  const drawConnections = useCallback((ctx: CanvasRenderingContext2D, particles: Particle[]) => {
+    const CD2 = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
+
+    // Pass 1 — normal lines (white-blue)
+    ctx.strokeStyle = 'rgba(190, 220, 255, 1)';
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        if (Math.max(particles[i].mouseProximity, particles[j].mouseProximity) > 0) continue;
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dSq = dx * dx + dy * dy;
+        if (dSq >= CD2) continue;
+        const fade = 1 - Math.pow(Math.sqrt(dSq) / CONNECTION_DISTANCE, 2);
+        ctx.globalAlpha = fade * 0.19;
+        ctx.lineWidth = 0.55 + fade * 0.45;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+
+    // Pass 2 — cyan glow near cursor
+    ctx.strokeStyle = 'rgba(0, 200, 255, 1)';
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const maxProx = Math.max(particles[i].mouseProximity, particles[j].mouseProximity);
+        if (maxProx === 0) continue;
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dSq = dx * dx + dy * dy;
+        if (dSq >= CD2) continue;
+        const fade = 1 - Math.pow(Math.sqrt(dSq) / CONNECTION_DISTANCE, 2);
+        ctx.globalAlpha = fade * (0.28 + maxProx * 0.62);
+        ctx.lineWidth = 0.7 + fade * 0.4 + maxProx * 1.3;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+
+    ctx.globalAlpha = 1;
   }, []);
 
-  // Check if mobile
-  const checkMobile = useCallback(() => {
-    return window.innerWidth < 768;
+  // ── Cursor glow: pulsing ring + radial halo + tiny dot ────────────────────
+  const drawCursorGlow = useCallback((ctx: CanvasRenderingContext2D) => {
+    const m = mouseRef.current;
+    if (m.x === undefined || m.y === undefined) return;
+
+    const pulse = 0.5 + 0.5 * Math.sin(globalTime * 0.0045);
+
+    // Soft radial halo
+    const halo = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, 58);
+    halo.addColorStop(0, `rgba(0, 200, 255, ${(0.10 + pulse * 0.08).toFixed(3)})`);
+    halo.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.beginPath();
+    ctx.fillStyle = halo;
+    ctx.arc(m.x, m.y, 58, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Outer pulsing ring
+    const outerR = 18 + pulse * 6;
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, outerR, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0, 200, 255, ${(0.18 + pulse * 0.14).toFixed(3)})`;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    // Inner crisp ring
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, 7 + pulse * 2, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0, 220, 255, ${(0.50 + pulse * 0.30).toFixed(3)})`;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // Tiny bright centre dot
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(120, 230, 255, ${(0.80 + pulse * 0.20).toFixed(3)})`;
+    ctx.fill();
   }, []);
 
-  // Effect to set up and run the canvas animation
+  const checkMobile = useCallback(() => window.innerWidth < 768, []);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
-    // High-quality rendering
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
     let lastTime = 0;
     let resizeTimeout: ReturnType<typeof setTimeout>;
 
-    /**
-     * Enhanced initialization with 50% more particles
-     */
     const init = () => {
-      canvas.width = window.innerWidth;
+      canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
-      
-      // Update mobile detection
       isMobileRef.current = checkMobile();
-      
       particlesRef.current = [];
-      // Increased particle density by 50% for richer network
-      const particleCount = Math.floor((canvas.width * canvas.height) / 8000);
-      
-      for (let i = 0; i < particleCount; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        particlesRef.current.push(new Particle(x, y, canvas));
+      const count = Math.floor((canvas.width * canvas.height) / 8200);
+      for (let i = 0; i < count; i++) {
+        particlesRef.current.push(new Particle(
+          Math.random() * canvas.width,
+          Math.random() * canvas.height,
+          canvas
+        ));
       }
     };
 
-    /**
-     * Optimized animation loop
-     */
     const animate = (currentTime: number) => {
-      const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1);
-      lastTime = currentTime;
+      const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
+      lastTime   = currentTime;
       globalTime = currentTime;
 
-      // Efficient canvas clearing
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const particles = particlesRef.current;
-      const isMobile = isMobileRef.current;
-      
-      // Batch update particles
+      const isMobile  = isMobileRef.current;
+
       for (let i = 0; i < particles.length; i++) {
-        if (isMobile) {
-          particles[i].updateMobile(ctx, deltaTime);
-        } else {
-          particles[i].update(ctx, mouseRef.current, deltaTime);
-        }
+        if (isMobile) particles[i].updateMobile(ctx, dt);
+        else          particles[i].update(ctx, mouseRef.current, dt);
       }
 
-      // Draw connections
       drawConnections(ctx, particles);
 
-      animationFrameId.current = requestAnimationFrame(animate);
+      if (!isMobile) drawCursorGlow(ctx);
+
+      animFrameId.current = requestAnimationFrame(animate);
     };
 
-    // --- Enhanced Event Handlers ---
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!mouseRef.current || isMobileRef.current) return;
-      mouseRef.current.x = event.clientX;
-      mouseRef.current.y = event.clientY;
-    };
-
-    const handleMouseOut = () => {
-      if (!mouseRef.current || isMobileRef.current) return;
-      mouseRef.current.x = undefined;
-      mouseRef.current.y = undefined;
-    };
-
-    const handleTouchMove = (event: TouchEvent) => {
+    // ── Event handlers ────────────────────────────────────────────────────
+    const onMouseMove = (e: MouseEvent) => {
       if (isMobileRef.current) return;
-      if (!mouseRef.current || !event.touches[0]) return;
-      event.preventDefault();
-      mouseRef.current.x = event.touches[0].clientX;
-      mouseRef.current.y = event.touches[0].clientY;
+      mouseRef.current.x = e.clientX;
+      mouseRef.current.y = e.clientY;
     };
-
-    const handleTouchEnd = () => {
-      if (!mouseRef.current || isMobileRef.current) return;
+    const onMouseOut = () => {
+      if (isMobileRef.current) return;
       mouseRef.current.x = undefined;
       mouseRef.current.y = undefined;
     };
-    
-    const handleResize = () => {
-      isMobileRef.current = checkMobile();
-      init();
+    const onTouchMove = (e: TouchEvent) => {
+      if (isMobileRef.current || !e.touches[0]) return;
+      e.preventDefault();
+      mouseRef.current.x = e.touches[0].clientX;
+      mouseRef.current.y = e.touches[0].clientY;
     };
-
-    // Throttled resize handler
-    const handleThrottledResize = () => {
+    const onTouchEnd = () => {
+      if (isMobileRef.current) return;
+      mouseRef.current.x = undefined;
+      mouseRef.current.y = undefined;
+    };
+    const onResize = () => {
       clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(handleResize, 250);
+      resizeTimeout = setTimeout(() => { isMobileRef.current = checkMobile(); init(); }, 250);
     };
 
-    // Event listeners - only add mouse listeners if not mobile
     if (!checkMobile()) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseout', handleMouseOut);
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseout', onMouseOut);
     }
-    
-    // Touch listeners - passive on mobile to allow scrolling
-    window.addEventListener('touchmove', handleTouchMove, { 
-      passive: isMobileRef.current 
-    });
-    window.addEventListener('touchend', handleTouchEnd);
-    window.addEventListener('resize', handleThrottledResize);
+    window.addEventListener('touchmove', onTouchMove, { passive: isMobileRef.current });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('resize', onResize);
 
-    // Initial setup
     init();
-    animationFrameId.current = requestAnimationFrame(animate);
+    animFrameId.current = requestAnimationFrame(animate);
 
-    // Cleanup
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseout', handleMouseOut);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('resize', handleThrottledResize);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseout', onMouseOut);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('resize', onResize);
       clearTimeout(resizeTimeout);
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
+      if (animFrameId.current) cancelAnimationFrame(animFrameId.current);
     };
-  }, [drawConnections, checkMobile]);
+  }, [drawConnections, drawCursorGlow, checkMobile]);
 
   return (
-    <div className="fixed inset-0 overflow-hidden -z-10 select-none">
-      {/* Enhanced gradient overlays */}
+    <div
+      className="fixed inset-0 overflow-hidden -z-10 select-none transition-colors duration-700"
+      style={{ background: isDark ? '#00060f' : 'transparent' }}
+    >
+      {/* Base radial overlay */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 transition-all duration-700"
         style={{
-          background: 'radial-gradient(circle at 30% 30%, rgba(173, 216, 230, 0.18), rgba(0, 105, 148, 0.28))'
+          background: isDark
+            ? 'radial-gradient(circle at 30% 30%, rgba(0, 20, 50, 0.55), rgba(0, 5, 15, 0.70))'
+            : 'radial-gradient(circle at 30% 30%, rgba(173, 216, 230, 0.18), rgba(0, 105, 148, 0.28))'
         }}
       />
 
-      {/* Primary rotating gradient - larger coverage */}
+      {/* Primary rotating conic gradient */}
       <div
-        className="absolute top-1/2 left-1/2 w-[220%] h-[220%] opacity-85"
+        className="absolute top-1/2 left-1/2 w-[220%] h-[220%] transition-opacity duration-700"
         style={{
-          background: 'conic-gradient(from 0deg, #003f5c, #005a87, #0077b6, #0096c7, #00b4d8, #48cae4, #90e0ef, #ade8f4, #90e0ef, #48cae4, #00b4d8, #0096c7, #0077b7, #005a87, #003f5c)',
+          background: isDark
+            ? 'conic-gradient(from 0deg, #000510, #000d22, #001a3a, #002952, #001a3a, #000d22, #001a3a, #002952, #003566, #002952, #001a3a, #000d22, #000510)'
+            : 'conic-gradient(from 0deg, #003f5c, #005a87, #0077b6, #0096c7, #00b4d8, #48cae4, #90e0ef, #ade8f4, #90e0ef, #48cae4, #00b4d8, #0096c7, #0077b7, #005a87, #003f5c)',
+          opacity: isDark ? 1 : 0.85,
           transform: 'translate(-50%, -50%)',
           animation: 'rotate-smooth 25s linear infinite',
-          filter: 'blur(60px)'
+          filter: isDark ? 'blur(55px)' : 'blur(60px)',
         }}
       />
 
-      {/* Secondary rotating gradient - larger coverage */}
+      {/* Secondary counter-rotating conic gradient */}
       <div
-        className="absolute top-1/2 left-1/2 w-[200%] h-[200%] opacity-65"
+        className="absolute top-1/2 left-1/2 w-[200%] h-[200%] transition-opacity duration-700"
         style={{
-          background: 'conic-gradient(from 0deg, #003f5c, #005a87, #0077b6, #0096c7, #00b4d8, #48cae4, #90e0ef, #48cae4, #00b4d8, #0096c7, #0077b6, #005a87, #003f5c)',
+          background: isDark
+            ? 'conic-gradient(from 0deg, #000510, #001020, #002040, #001535, #000a18, #002040, #001020, #000510)'
+            : 'conic-gradient(from 0deg, #003f5c, #005a87, #0077b6, #0096c7, #00b4d8, #48cae4, #90e0ef, #48cae4, #00b4d8, #0096c7, #0077b6, #005a87, #003f5c)',
+          opacity: isDark ? 0.9 : 0.65,
           transform: 'translate(-50%, -50%)',
           animation: 'rotate-smooth-reverse 35s linear infinite',
-          filter: 'blur(60px)'
+          filter: isDark ? 'blur(50px)' : 'blur(60px)',
         }}
       />
 
-      {/* Enhanced CSS animations */}
       <style jsx global>{`
         @keyframes rotate-smooth {
-          0% { transform: translate(-50%, -50%) rotate(0deg); }
+          0%   { transform: translate(-50%, -50%) rotate(0deg); }
           100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
         @keyframes rotate-smooth-reverse {
-          0% { transform: translate(-50%, -50%) rotate(0deg); }
+          0%   { transform: translate(-50%, -50%) rotate(0deg); }
           100% { transform: translate(-50%, -50%) rotate(-360deg); }
         }
       `}</style>
-      
-      {/* High-performance canvas */}
-      <canvas 
-        ref={canvasRef} 
+
+      <canvas
+        ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full"
-        style={{
-          touchAction: isMobileRef.current ? 'auto' : 'none' // Allow scrolling on mobile
-        }}
+        style={{ touchAction: isMobileRef.current ? 'auto' : 'none' }}
       />
     </div>
   );
