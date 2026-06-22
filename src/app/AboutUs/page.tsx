@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 
 const sections = [
   {
@@ -10,10 +9,10 @@ const sections = [
     text: "",
     detailedText: (
       <>
-        IEEE ISET Bizerte Student Branch stands as a beacon of innovation and excellence in the heart of Tunisia's technological education landscape. As an integral part of the world's largest technical professional organization, we bring together passionate students dedicated to advancing technology for humanity's benefit. Our branch serves as a dynamic platform where theoretical knowledge meets practical application, fostering an environment where future engineers and technologists can thrive, collaborate, and transform their innovative ideas into tangible solutions that address real-world challenges.
+        IEEE ISET Bizerte Student Branch stands as a beacon of innovation and excellence in the heart of Tunisia&apos;s technological education landscape. As an integral part of the world&apos;s largest technical professional organization, we bring together passionate students dedicated to advancing technology for humanity&apos;s benefit. Our branch serves as a dynamic platform where theoretical knowledge meets practical application, fostering an environment where future engineers and technologists can thrive, collaborate, and transform their innovative ideas into tangible solutions that address real-world challenges.
       </>
     ),
-    image: "../../images/2.jpg",
+    image: "/images/2.jpg",
     invert: false,
   },
   {
@@ -25,7 +24,7 @@ const sections = [
         Our event portfolio is carefully crafted to provide comprehensive learning experiences that complement academic education while developing essential professional skills. We create immersive environments where students can explore emerging technologies, develop practical skills, and build valuable connections with industry professionals and like-minded peers.
       </>
     ),
-    image: "../../images/4.jpg",
+    image: "/images/4.jpg",
     invert: true,
   },
   {
@@ -34,10 +33,10 @@ const sections = [
     text: "",
     detailedText: (
       <>
-        Our journey is marked by significant milestones that reflect our commitment to excellence and our members' dedication to pushing technological boundaries. These accomplishments stand as testament to the quality of education, innovation, and leadership development at IEEE ISET Bizerte.
+        Our journey is marked by significant milestones that reflect our commitment to excellence and our members&apos; dedication to pushing technological boundaries. These accomplishments stand as testament to the quality of education, innovation, and leadership development at IEEE ISET Bizerte.
       </>
     ),
-    image: "../../images/8.jpg",
+    image: "/images/8.jpg",
     invert: false,
   },
   {
@@ -46,12 +45,12 @@ const sections = [
     text: "",
     detailedText: (
       <>
-        We welcome students from all engineering disciplines who share our passion for technology and innovation. As a member, you'll gain access to exclusive <b>technical training sessions</b>, <b>leadership development programs</b>, <b>mentorship opportunities</b> with industry professionals, and <b>networking events</b> with potential employers. You can participate in <b>research projects</b>, represent our branch at international conferences, and contribute to <b>community outreach programs</b> that use technology to solve local challenges. Our alumni network includes successful engineers, entrepreneurs, and researchers working at leading global technology companies.
+        We welcome students from all engineering disciplines who share our passion for technology and innovation. As a member, you&apos;ll gain access to exclusive <b>technical training sessions</b>, <b>leadership development programs</b>, <b>mentorship opportunities</b> with industry professionals, and <b>networking events</b> with potential employers. You can participate in <b>research projects</b>, represent our branch at international conferences, and contribute to <b>community outreach programs</b> that use technology to solve local challenges. Our alumni network includes successful engineers, entrepreneurs, and researchers working at leading global technology companies.
         <br /><br />
 
       </>
     ),
-    image: "../../images/1.jpg",
+    image: "/images/1.jpg",
     invert: true,
   },
 ];
@@ -177,7 +176,7 @@ export default function AboutUsPage() {
             <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-ieeeblue  [text-shadow:0_0_2px_white,0_0_4px_white,0_0_6px_white]">Our Mission</h3>
             <p className="text-base sm:text-lg leading-relaxed">
               To foster a collaborative environment where students can develop technical excellence,
-              leadership skills, and professional networks while advancing technology for humanity's benefit.
+              leadership skills, and professional networks while advancing technology for humanity&apos;s benefit.
               We strive to bridge academic learning with real-world applications through innovative projects,
               knowledge sharing, and community engagement.
             </p>

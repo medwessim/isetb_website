@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     icon: [
       // Default favicon
       {
-        url: "./logo.png",
+        url: "/logo.png",
         sizes: "any",
       },]}
 };
