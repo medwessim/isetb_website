@@ -1,0 +1,14 @@
+DirectoryIndex index.html index.htm
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Serve existing files and directories directly
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Route everything else to index.html
+    RewriteRule ^ /index.html [L]
+</IfModule>

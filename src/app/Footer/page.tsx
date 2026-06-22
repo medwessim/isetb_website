@@ -145,7 +145,7 @@ const PremiumFooter = () => {
               className="flex items-center justify-center md:justify-end w-full md:w-auto"
             >
               <Link href="/" className="relative w-36 h-10 md:w-40 md:h-12 block">
-                <Image src="/logos/IEEE x ISETB_white.png" alt="Logo" fill className="object-contain object-left hover:scale-105 transition-transform duration-300" />
+                <Image src="/logos/ieee-isetb-white.png" alt="Logo" fill className="object-contain object-left hover:scale-105 transition-transform duration-300" />
               </Link>
             </motion.div>
           </motion.div>

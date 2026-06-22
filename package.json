@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build && del /f /q out\\index.txt 2>nul || true",
     "start": "next start",
     "lint": "next lint"
   },
