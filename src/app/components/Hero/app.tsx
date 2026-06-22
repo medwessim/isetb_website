@@ -3,17 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 
-interface StatItem {
-  value: number;
-  label: string;
-  suffix?: string;
-}
-
 const HeroSection = () => {
-  const [stats] = useState<StatItem[]>([
-    { value: 6, label: 'Years of Excellence', suffix: '+' },
-    { value: 110, label: 'Happy Members', suffix: '+' },
-  ]);
   const [location] = useState('ISET Bizerte, Tunisia');
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const sectionRef = useRef<HTMLElement>(null);

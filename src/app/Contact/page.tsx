@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 
 const IEEEContactPage = () => {
     const [formData, setFormData] = useState({
@@ -12,7 +12,7 @@ const IEEEContactPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
@@ -23,7 +23,7 @@ const IEEEContactPage = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
         setSubmitStatus('idle');
@@ -139,7 +139,7 @@ const IEEEContactPage = () => {
         },
     ];
 
-    const containerVariants = {
+    const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -149,14 +149,14 @@ const IEEEContactPage = () => {
         }
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
             opacity: 1,
             y: 0,
             transition: {
                 duration: 0.6,
-                ease: "easeOut"
+                ease: "easeOut" as const
             }
         }
     };
@@ -231,7 +231,7 @@ const IEEEContactPage = () => {
                                 className="pt-6 border-t border-gray-700/50"
                                 variants={itemVariants}
                             >
-                                <h3 className="text-sm font-semibold text-black uppercase tracking-wider mb-4">
+                                <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
                                     Connect With Us
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
@@ -288,7 +288,7 @@ const IEEEContactPage = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.7 }}
                                     >
-                                        Interested in joining IEEE or collaborating on projects? We'd love to hear from you!
+                                        Interested in joining IEEE or collaborating on projects? We&apos;d love to hear from you!
                                     </motion.p>
 
                                     {/* Status Messages */}
@@ -305,7 +305,7 @@ const IEEEContactPage = () => {
                                                 <span className="font-medium">Thank you for your message!</span>
                                             </div>
                                             <p className="text-sm mt-1 text-green-100">
-                                                We've received your message and will get back to you soon.
+                                                We&apos;ve received your message and will get back to you soon.
                                             </p>
                                         </motion.div>
                                     )}
@@ -381,7 +381,7 @@ const IEEEContactPage = () => {
                                                 name="message"
                                                 value={formData.message}
                                                 onChange={handleChange}
-                                                rows="5"
+                                                rows={5}
                                                 placeholder="Tell us about your interest in IEEE or your project idea..."
                                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
                                                 required
@@ -468,7 +468,7 @@ const IEEEContactPage = () => {
                                             width="100%"
                                             height="100%"
                                             style={{ border: 0 }}
-                                            allowFullScreen=""
+                                            allowFullScreen
                                             loading="lazy"
                                             referrerPolicy="no-referrer-when-downgrade"
                                             title="ISET Bizerte Location"
