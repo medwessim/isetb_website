@@ -6,6 +6,7 @@ import GradientBackground from './components/Background/app';
 import { Navbar } from './Nav/app';
 import Footer from './Footer/page';
 import Loader from './Loader/page';
+import { ThemeProvider } from './context/ThemeContext';
 
 export const metadata: Metadata = {
   title: "IEEE ISET Bizerte Student Branch",
@@ -29,25 +30,20 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
-        {/* Loader - shows only on first visit, above everything */}
-        <Loader />
-        
-        {/* Main website content - hidden until loader finishes */}
-        <div className="contents">
-          {/* Background animation - permanent */}
-          <GradientBackground />
-          
-          {/* Navbar - permanent */}
-          <Navbar />
-          
-          {/* Main content area - this changes between pages */}
-          <main className="min-h-screen">
-            {children}
-          </main>
-          
-          {/* Footer - permanent */}
-          <Footer />
-        </div>
+        <ThemeProvider>
+          {/* Loader - shows only on first visit, above everything */}
+          <Loader />
+
+          {/* Main website content */}
+          <div className="contents">
+            <GradientBackground />
+            <Navbar />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
