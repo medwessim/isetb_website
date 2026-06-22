@@ -2,19 +2,14 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import Cs from "../../assets/cs.png";
-import Cis from "../../assets/cis.png";
-import Ias from "../../assets/ias_ies.png";
-import Wie from "../../assets/wie.png";
-import Ras from "../../assets/ras.png";
 
 const HoverCards = () => {
   const chapters = [
-    { src: Ras, alt: "RAS Logo" },
-    { src: Cs, alt: "CS Logo" },
-    { src: Ias, alt: "IAS Logo" },
-    { src: Wie, alt: "WIE Logo" },
-    { src: Cis, alt: "CIS Logo" },
+    { src: "/logos/ras.png",     alt: "RAS Logo" },
+    { src: "/logos/cs.png",      alt: "CS Logo" },
+    { src: "/logos/ias_ies.png", alt: "IAS Logo" },
+    { src: "/logos/wie.png",     alt: "WIE Logo" },
+    { src: "/logos/cis.png",     alt: "CIS Logo" },
   ];
 
   return (

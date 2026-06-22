@@ -2,12 +2,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-import Cs from "../assets/cs.png";
-import Cis from "../assets/cis.png";
-import Ias from "../assets/ias_ies.png";
-import Wie from "../assets/wie.png";
-import Ras from "../assets/ras.png";
-
 const chapters = [
     {
         id: "cs",
@@ -17,7 +11,7 @@ const chapters = [
                 The <b>IEEE Computer Society</b> is the premier source for information, inspiration, and collaboration in computer science and engineering. We focus on advancing the theory, practice, and application of computer and information processing science and technology. Our activities include coding workshops, algorithm competitions, AI/ML sessions, and career development programs for aspiring computer scientists.
             </>
         ),
-        image: Cs.src,
+        image: "/logos/cs.png",
         invert: false,
         socials: {
             website: "https://cs-isetbizerte.ieee.tn/",
@@ -34,7 +28,7 @@ const chapters = [
                 The <b>IEEE Computational Intelligence Society</b> is dedicated to the theory, design, application, and development of computational intelligence paradigms. We explore neural networks, fuzzy systems, evolutionary computation, and machine learning through hands-on workshops, research talks, and innovative projects that push the boundaries of intelligent systems.
             </>
         ),
-        image: Cis.src,
+        image: "/logos/cis.png",
         invert: true,
         socials: {
             website: "https://cis-isetbizerte.ieee.tn/",
@@ -53,7 +47,7 @@ const chapters = [
             The <b>Industrial Electronics Society (IES)</b> advances the theory and application of electronics, intelligent systems, automation, and robotics within modern industries.
             </>
         ),
-        image: Ias.src,
+        image: "/logos/ias_ies.png",
         invert: false,
         socials: {
             website: "https://ias.ieee.org",
@@ -70,7 +64,7 @@ const chapters = [
                 <b>IEEE Women in Engineering</b> is dedicated to promoting women engineers and scientists and inspiring girls around the world to follow their academic interests in a career in engineering. We organize mentorship programs, leadership workshops, networking events, and outreach activities to foster diversity and inclusion in STEM fields.
             </>
         ),
-        image: Wie.src,
+        image: "/logos/wie.png",
         invert: true,
         socials: {
             website: "#",
@@ -87,7 +81,7 @@ const chapters = [
                 The <b>IEEE Robotics & Automation Society</b> is focused on advancing innovation, education, and fundamental and applied research in robotics and automation. We conduct robotics competitions, hands-on workshops, and research projects that explore autonomous systems, mechatronics, and intelligent automation technologies.
             </>
         ),
-        image: Ras.src,
+        image: "/logos/ras.png",
         invert: false,
         socials: {
             website: "#",

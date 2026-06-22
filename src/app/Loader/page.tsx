@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../assets/IEEE x ISETB_white.png';
 
 const DISPLAY_MS = 3200;
 
@@ -114,7 +113,7 @@ const Loader = () => {
               className="relative w-36 h-24"
             >
               <Image
-                src={logo}
+                src="/logos/IEEE x ISETB_white.png"
                 alt="IEEE ISET Bizerte"
                 fill
                 className="object-contain drop-shadow-[0_0_20px_rgba(0,180,216,0.4)]"

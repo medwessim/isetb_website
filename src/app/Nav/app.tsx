@@ -15,7 +15,6 @@ import {
   Sun,
 } from 'lucide-react';
 import Image from 'next/image';
-import logo from "../assets/logo.png";
 import { useTheme } from '../context/ThemeContext';
 
 export const Navbar = () => {
@@ -74,7 +73,7 @@ export const Navbar = () => {
             <div className="flex-shrink-0">
               <Link href="/" className="relative w-32 h-10 sm:w-30 sm:h-12 md:w-38 md:h-14 lg:w-46 lg:h-16 block">
                 <Image
-                  src={logo}
+                  src="/logo.png"
                   alt="Logo"
                   fill
                   className="object-contain object-left hover:scale-105 transition-transform duration-300"
