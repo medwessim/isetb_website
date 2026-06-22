@@ -164,7 +164,7 @@ const IEEEContactPage = () => {
     return (
         <div className="min-h-screen relative">
             <div className="relative z-10">
-               <div className="container px-6 py-12 mx-auto md:px-8 lg:px-12 xl:px-24 lg:py-16">
+               <div className="container px-4 py-12 mx-auto sm:px-6 lg:px-12 lg:py-16">
                     <motion.div
                         className="text-center mb-16"
                         initial={{ opacity: 0, y: -20 }}

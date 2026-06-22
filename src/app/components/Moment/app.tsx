@@ -1,12 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback, memo } from "react";
 import { motion } from "framer-motion";
-
-interface Moment {
-  id: number;
-  title: string;
-  imageUrl: string;
-}
+import { MOMENTS, type Moment } from "../../data/moments";
 
 interface CardStyle {
   translateX: string;
@@ -14,20 +9,6 @@ interface CardStyle {
   opacity: string;
   zIndex: number;
 }
-
-const moments: Moment[] = [
-  { id: 1, title: "WIE ACT 4.0", imageUrl: "/images/9.jpg" },
-  { id: 2, title: "IEEE DAY 2025", imageUrl: "/images/8.jpg" },
-  { id: 3, title: "CODE IT UP 5.0", imageUrl: "/images/3.png" },
-  { id: 11, title: "CSTAM 2.0", imageUrl: "/images/15.jpg" },
-  { id: 5, title: "IEEE TEJMAANA 2.0", imageUrl: "/images/6.png" },
-  { id: 6, title: "IEEE DAY 2024", imageUrl: "/images/2.jpg" },
-  { id: 4, title: "CODE IT UP 5.0", imageUrl: "/images/1.jpg" },
-  { id: 7, title: "TSYP 12", imageUrl: "/images/10.jpg" },
-  { id: 8, title: "Bizerte TCODI", imageUrl: "/images/11.png" },
-  { id: 9, title: "CSTAM 2.0", imageUrl: "/images/14.jpg" },
-  { id: 10, title: "Panel", imageUrl: "/images/5.jpg" },
-];
 
 const getCardStyles = (position: number, totalLength: number): CardStyle => {
   const styles: CardStyle = { translateX: "0px", scale: "0", opacity: "0", zIndex: 0 };
@@ -115,11 +96,11 @@ const MomentsCarousel: React.FC = () => {
   }, []);
 
   const nextCard = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % moments.length);
+    setCurrentIndex((prev) => (prev + 1) % MOMENTS.length);
   }, []);
 
   const prevCard = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + moments.length) % moments.length);
+    setCurrentIndex((prev) => (prev - 1 + MOMENTS.length) % MOMENTS.length);
   }, []);
 
   useEffect(() => {
@@ -172,10 +153,10 @@ const MomentsCarousel: React.FC = () => {
             >
               &#8592;
             </button>
-            <MomentCardMobile moment={moments[currentIndex]} />
+            <MomentCardMobile moment={MOMENTS[currentIndex]} />
             <button
               className="absolute right-1 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-md rounded-full shadow-md active:scale-90 transition hover:bg-white/40"
-              style={{ fontSize: 24, width: 38, height: 38, display: currentIndex === moments.length - 1 ? "none" : "flex", alignItems: "center", justifyContent: "center" }}
+              style={{ fontSize: 24, width: 38, height: 38, display: currentIndex === MOMENTS.length - 1 ? "none" : "flex", alignItems: "center", justifyContent: "center" }}
               onClick={nextCard}
               aria-label="Next"
             >
@@ -183,7 +164,7 @@ const MomentsCarousel: React.FC = () => {
             </button>
           </div>
           <div className="flex justify-center gap-2 mt-3">
-            {moments.map((_, idx) => (
+            {MOMENTS.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
@@ -208,9 +189,9 @@ const MomentsCarousel: React.FC = () => {
             className="flex relative overflow-visible w-[380px] h-[320px]"
             style={{ minWidth: "380px", minHeight: "300px", margin: "0 auto" }}
           >
-            {moments.map((moment, index) => {
-              const position = (index - currentIndex + moments.length) % moments.length;
-              const style = getCardStyles(position, moments.length);
+            {MOMENTS.map((moment, index) => {
+              const position = (index - currentIndex + MOMENTS.length) % MOMENTS.length;
+              const style = getCardStyles(position, MOMENTS.length);
               return <MomentCard key={moment.id} moment={moment} style={style} />;
             })}
           </div>
@@ -225,7 +206,7 @@ const MomentsCarousel: React.FC = () => {
 
           {/* Desktop dots */}
           <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex justify-center gap-2">
-            {moments.map((_, idx) => (
+            {MOMENTS.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
