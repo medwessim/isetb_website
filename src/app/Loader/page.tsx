@@ -113,7 +113,7 @@ const Loader = () => {
               className="relative w-36 h-24"
             >
               <Image
-                src="/logos/ieee-isetb-white.png"
+                src="/logos/ieee-white.png"
                 alt="IEEE ISET Bizerte"
                 fill
                 className="object-contain drop-shadow-[0_0_20px_rgba(0,180,216,0.4)]"
